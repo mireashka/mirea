@@ -261,60 +261,6 @@ solve minimize sum_first;
 % Определение всех пакетов и их версий
 enum PACKAGES = {root, foo1_0, foo1_1, left_1_0, right_1_0, shared1_0, shared2_0, target1_0, target2_0};
 
-% Зависимости пакетов
-array[PACKAGES] of set of PACKAGES: dependencies = [
-    {foo1_0, target2_0}, % root 1.0.0
-    {left_1_0, right_1_0}, % foo 1.1.0
-    {},                  % foo 1.0.0
-    {shared1_0},        % left 1.0.0
-    {},                  % right 1.0.0
-    {target1_0},        % shared 2.0.0
-    {},                  % shared 1.0.0
-    {},                  % target 2.0.0
-    {}                   % target 1.0.0
-];
-
-% Массив для хранения установленных пакетов
-array[PACKAGES] of var bool: installed;
-
-% Ограничения на зависимости
-constraint forall(p in PACKAGES) (
-    installed[p] -> forall(dep in dependencies[p]) (installed[dep])
-);
-
-% Устанавливаем корневой пакет
-constraint installed[root] = true;
-
-% Устанавливаем left и right
-constraint installed[left_1_0] = true; % Установим left
-constraint installed[right_1_0] = false; % Не устанавливаем right
-
-% Найдем решение, минимизируя количество установленных пакетов
-solve minimize sum(installed);
-
-% Выводим решение с версиями
-output [
-    "Установленные пакеты: ", 
-    show([p | p in PACKAGES where installed[p]]), 
-    "\n",
-    "Left установлен: ", show(installed[left_1_0]), "\n",
-    "Right установлен: ", show(installed[right_1_0]), "\n"
-];
-
-
-Определение пакетов: Мы определяем перечисление PACKAGES, в котором перечислены все пакеты.
-Зависимости: Мы создаем массив dependencies, где для каждого пакета указаны его зависимости.
-Установленные пакеты: Мы используем переменные типа bool, чтобы обозначить, установлен пакет или нет.
-Ограничения: Указываем, что если пакет установлен, то все его зависимости также должны быть установлены.
-Установка корневого пакета: Корневой пакет root должен быть установлен.
-Поиск решения: Мы решаем задачу, минимизируя количество установленных пакетов.
-
-
-![image](https://github.com/user-attachments/assets/6dd3851f-1965-4aaf-9439-d2f5890b7e64)
-
-
-
-
 
 ## Задача 7
 
